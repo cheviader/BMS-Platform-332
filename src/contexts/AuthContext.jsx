@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { supabase, DEMO_ADMIN } from '../lib/supabase'
+import { supabase, DEMO_ADMIN, isAdmin } from '../lib/supabase'
 
 const AuthContext = createContext({})
 
@@ -53,11 +53,11 @@ export const AuthProvider = ({ children }) => {
         email,
         password,
       })
-      
+
       if (data.user) {
         setUser(data.user)
       }
-      
+
       return { data, error }
     } catch (error) {
       return { data: null, error: { message: 'Authentication failed' } }
@@ -74,6 +74,7 @@ export const AuthProvider = ({ children }) => {
           emailRedirectTo: window.location.origin
         }
       })
+
       return { data, error }
     } catch (error) {
       return { data: null, error: { message: 'Registration failed' } }
@@ -92,6 +93,7 @@ export const AuthProvider = ({ children }) => {
           },
         },
       })
+
       return { data, error }
     } catch (error) {
       return { data: null, error: { message: 'Google sign-in not available in demo mode' } }
@@ -103,7 +105,7 @@ export const AuthProvider = ({ children }) => {
       // Clear demo session
       localStorage.removeItem('demo-session')
       setUser(null)
-      
+
       // Sign out from Supabase
       const { error } = await supabase.auth.signOut()
       return { error }
@@ -117,6 +119,7 @@ export const AuthProvider = ({ children }) => {
       const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password`,
       })
+
       return { data, error }
     } catch (error) {
       return { data: null, error: { message: 'Password reset not available in demo mode' } }
@@ -128,6 +131,7 @@ export const AuthProvider = ({ children }) => {
       const { data, error } = await supabase.auth.updateUser({
         password: password
       })
+
       return { data, error }
     } catch (error) {
       return { data: null, error: { message: 'Password update not available in demo mode' } }
@@ -142,7 +146,8 @@ export const AuthProvider = ({ children }) => {
     signOut,
     resetPassword,
     updatePassword,
-    loading
+    loading,
+    isAdmin: isAdmin(user)
   }
 
   return (

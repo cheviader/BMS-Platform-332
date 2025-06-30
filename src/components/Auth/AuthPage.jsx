@@ -97,13 +97,23 @@ const AuthPage = () => {
           <motion.div
             initial={{ scale: 0.8 }}
             animate={{ scale: 1 }}
-            className="w-16 h-16 bg-gradient-primary rounded-xl flex items-center justify-center mx-auto mb-4"
+            className="flex items-center justify-center mx-auto mb-4"
           >
-            <SafeIcon icon={FiUser} className="text-white text-2xl" />
+            <img 
+              src="https://boostmy.site/wp-content/uploads/2025/03/boostmy.site-final-2025-400.png" 
+              alt="BoostMy.Site Logo" 
+              className="h-16 w-auto object-contain"
+              onError={(e) => {
+                e.target.style.display = 'none'
+                e.target.nextSibling.style.display = 'flex'
+              }}
+            />
+            <div 
+              className="w-16 h-16 bg-gradient-primary rounded-xl items-center justify-center hidden"
+            >
+              <SafeIcon icon={FiUser} className="text-white text-2xl" />
+            </div>
           </motion.div>
-          <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-2">
-            Blueprint Manager
-          </h1>
           <p className="text-gray-600">
             {isLogin ? 'Welcome back! Sign in to continue' : 'Create your account to get started'}
           </p>

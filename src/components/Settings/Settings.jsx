@@ -2,14 +2,18 @@ import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import * as FiIcons from 'react-icons/fi'
 import SafeIcon from '../common/SafeIcon'
+import AdminSettings from './AdminSettings'
+import { isAdmin } from '../../lib/supabase'
+import { useAuth } from '../../contexts/AuthContext'
 
-const { FiUser, FiLock, FiDatabase, FiMail, FiBell, FiSave } = FiIcons
+const { FiUser, FiLock, FiDatabase, FiMail, FiBell, FiSave, FiSettings } = FiIcons
 
 const Settings = () => {
+  const { user } = useAuth()
   const [activeTab, setActiveTab] = useState('profile')
   const [profileData, setProfileData] = useState({
-    name: 'Admin User',
-    email: 'admin@example.com',
+    name: user?.user_metadata?.full_name || 'Admin User',
+    email: user?.email || 'admin@example.com',
     company: 'Blueprint Manager',
     phone: ''
   })
@@ -21,6 +25,11 @@ const Settings = () => {
     { id: 'notifications', label: 'Notifications', icon: FiBell },
     { id: 'email', label: 'Email', icon: FiMail }
   ]
+
+  // Add admin settings tab if user is admin
+  if (isAdmin(user)) {
+    tabs.push({ id: 'admin', label: 'Admin Settings', icon: FiSettings })
+  }
 
   const handleSave = () => {
     console.log('Settings saved')
@@ -57,7 +66,9 @@ const Settings = () => {
 
         <div className="flex-1">
           <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
-            {activeTab === 'profile' && (
+            {activeTab === 'admin' ? (
+              <AdminSettings />
+            ) : activeTab === 'profile' ? (
               <div>
                 <h2 className="text-xl font-semibold text-gray-900 mb-6">Profile Settings</h2>
                 <div className="space-y-6">
@@ -112,9 +123,7 @@ const Settings = () => {
                   </div>
                 </div>
               </div>
-            )}
-
-            {activeTab === 'security' && (
+            ) : activeTab === 'security' ? (
               <div>
                 <h2 className="text-xl font-semibold text-gray-900 mb-6">Security Settings</h2>
                 <div className="space-y-6">
@@ -150,9 +159,7 @@ const Settings = () => {
                   </div>
                 </div>
               </div>
-            )}
-
-            {activeTab === 'database' && (
+            ) : activeTab === 'database' ? (
               <div>
                 <h2 className="text-xl font-semibold text-gray-900 mb-6">Database Settings</h2>
                 <div className="space-y-6">
@@ -184,9 +191,7 @@ const Settings = () => {
                   </div>
                 </div>
               </div>
-            )}
-
-            {activeTab === 'notifications' && (
+            ) : activeTab === 'notifications' ? (
               <div>
                 <h2 className="text-xl font-semibold text-gray-900 mb-6">Notification Settings</h2>
                 <div className="space-y-6">
@@ -213,9 +218,7 @@ const Settings = () => {
                   </div>
                 </div>
               </div>
-            )}
-
-            {activeTab === 'email' && (
+            ) : activeTab === 'email' ? (
               <div>
                 <h2 className="text-xl font-semibold text-gray-900 mb-6">Email Settings</h2>
                 <div className="space-y-6">
@@ -253,19 +256,21 @@ const Settings = () => {
                   </div>
                 </div>
               </div>
-            )}
+            ) : null}
 
-            <div className="flex justify-end mt-8 pt-6 border-t border-gray-200">
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={handleSave}
-                className="px-6 py-3 bg-gradient-primary text-white rounded-lg flex items-center gap-2 hover:shadow-lg transition-shadow"
-              >
-                <SafeIcon icon={FiSave} />
-                Save Changes
-              </motion.button>
-            </div>
+            {activeTab !== 'admin' && (
+              <div className="flex justify-end mt-8 pt-6 border-t border-gray-200">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleSave}
+                  className="px-6 py-3 bg-gradient-primary text-white rounded-lg flex items-center gap-2 hover:shadow-lg transition-shadow"
+                >
+                  <SafeIcon icon={FiSave} />
+                  Save Changes
+                </motion.button>
+              </div>
+            )}
           </div>
         </div>
       </div>

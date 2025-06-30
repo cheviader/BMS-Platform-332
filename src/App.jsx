@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import AuthPage from './components/Auth/AuthPage'
-import Dashboard from './components/Dashboard/Dashboard'
+import AdminDashboard from './components/Dashboard/AdminDashboard'
 import BlueprintsList from './components/Blueprints/BlueprintsList'
 import SOPsList from './components/SOPs/SOPsList'
 import ToolsList from './components/Tools/ToolsList'
@@ -10,20 +10,32 @@ import PricingList from './components/Pricing/PricingList'
 import Settings from './components/Settings/Settings'
 import Sidebar from './components/Layout/Sidebar'
 import Header from './components/Layout/Header'
+import { isAdmin } from './lib/supabase'
 import './App.css'
 
 const MainApp = () => {
   const { user, signOut, loading } = useAuth()
-  const [activeSection, setActiveSection] = useState('dashboard')
+  const [activeSection, setActiveSection] = useState(() => {
+    // Set default section based on admin status
+    return 'dashboard'
+  })
 
   const handleSignOut = async () => {
     await signOut()
   }
 
+  const handleSectionChange = (section) => {
+    // Check if trying to access admin-only section
+    if (section === 'dashboard' && !isAdmin(user)) {
+      return // Don't allow access
+    }
+    setActiveSection(section)
+  }
+
   const renderContent = () => {
     switch (activeSection) {
       case 'dashboard':
-        return <Dashboard />
+        return <AdminDashboard />
       case 'blueprints':
         return <BlueprintsList />
       case 'sops':
@@ -37,7 +49,7 @@ const MainApp = () => {
       case 'settings':
         return <Settings />
       default:
-        return <Dashboard />
+        return isAdmin(user) ? <AdminDashboard /> : <BlueprintsList />
     }
   }
 
@@ -61,16 +73,13 @@ const MainApp = () => {
   // Show main app if authenticated
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      <Sidebar
-        activeSection={activeSection}
-        setActiveSection={setActiveSection}
-        onSignOut={handleSignOut}
+      <Sidebar 
+        activeSection={activeSection} 
+        setActiveSection={handleSectionChange} 
+        onSignOut={handleSignOut} 
       />
       <div className="flex-1 flex flex-col">
-        <Header
-          title={activeSection.charAt(0).toUpperCase() + activeSection.slice(1)}
-          user={user}
-        />
+        <Header title={activeSection} />
         <main className="flex-1 overflow-auto">
           {renderContent()}
         </main>
