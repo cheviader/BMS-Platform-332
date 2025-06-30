@@ -4,8 +4,8 @@ import { createClient } from '@supabase/supabase-js'
 const DEMO_MODE = true
 
 // These will be replaced with actual values when you connect your Supabase project
-const SUPABASE_URL = 'https://your-project-id.supabase.co'
-const SUPABASE_ANON_KEY = 'your-anon-key'
+const SUPABASE_URL = 'https://hsilldpjikloxzysmtbt.supabase.co'
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhzaWxsZHBqaWtsb3h6eXNtdGJ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEyODkxOTcsImV4cCI6MjA2Njg2NTE5N30.B_4_masDViZ5x_7HvNEr0YYEwdlHBeMc3tv3FYyyRGU'
 
 // For development, you can also use environment variables
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || SUPABASE_URL
